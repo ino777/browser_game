@@ -1,0 +1,17 @@
+extends ./layout/_game
+
+block append head
+    style(type="text/css").
+        #mainContainer {
+            width: 1024px;
+            height: 576px;
+            }
+
+        #mainCanvas {
+            border: solid 1px black;
+        }
+
+block content
+    div#mainContainer
+        canvas#mainCanvas
+        script(src=args.gameSrc)

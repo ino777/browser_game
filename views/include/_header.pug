@@ -1,0 +1,13 @@
+div(uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; bottom: #transparent-sticky-navbar").uk-section-secondary.uk-preserve-color
+    nav(uk-navbar style="position: relative; z-index: 980;")
+        div.uk-navbar-left
+            ul.uk-navbar-nav
+                li
+                    a(href=pages.home.url) #{pages.home.name}
+
+                li
+                    a(href="#") Games
+                    div.uk-navbar-dropdown
+                        ul.uk-nav.uk-navbar-dropdown-nav
+                            li.uk-active
+                                a(href=pages.aimalien.url) #{pages.aimalien.name}

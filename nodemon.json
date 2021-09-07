@@ -1,0 +1,14 @@
+{
+    "restartable": "rs",
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "watch": [
+        "routes", "assets", "views", "./app.ts"
+    ],
+    "ext": "js, mjs, ts, json, pug",
+    "ignore": [
+        "tests/**/*.ts"
+    ],
+    "exec": "ts-node ./app.ts"
+}

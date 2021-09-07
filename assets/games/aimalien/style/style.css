@@ -1,0 +1,8 @@
+@font-face {
+    font-family: "PixelMplus12";
+    src: url("../fonts/PixelMplus12-Regular.ttf");
+}
+
+#mainCanvas {
+    cursor: url("../images/aim.png") 16 16, auto;
+}
