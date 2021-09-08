@@ -1,13 +1,14 @@
 import { BaseScene } from "./base-scene";
-import { TextObject, ButtonObject, Octpus, Ray, Alien, Sound } from "./model";
-import { GameState, GameManager } from "./gamemanager";
+import { TextObject, ButtonObject, Octpus, Ray, Alien, Sound, ToggleList } from "./model";
+import { GameManager, GameLevel } from "./gamemanager";
 import menuSound from "./sounds/menu.mp3";
 
 
 // タイトル画面
 export class TitleScene extends BaseScene {
-    private titleText: TextObject;
+    private titleText: TextObject<string>;
     private startButton: ButtonObject;
+    private levelToggle: ToggleList<GameLevel>;
     private octpus: Octpus;
     private ray: Ray;
     private alien: Alien;
@@ -24,6 +25,7 @@ export class TitleScene extends BaseScene {
         this.titleText = new TextObject("Aim Alien", centerX, 150, 48);
         this.titleText.textAlign = "center";
         this.startButton = new ButtonObject("START", centerX, centerY, 200, 100, 50);
+        this.levelToggle = new ToggleList(100, centerY, 10, ["Normal", "Hard"]);
 
         this.octpus = new Octpus(centerX-100, 450, 30);
         this.ray = new Ray(centerX, 450, 30);
@@ -39,6 +41,7 @@ export class TitleScene extends BaseScene {
     update() {
         this.titleText.draw(this.ctx);
         this.startButton.draw(this.ctx);
+        this.levelToggle.draw(this.ctx);
 
         this.octpus.animate();
         this.ray.animate();
@@ -56,9 +59,17 @@ export class TitleScene extends BaseScene {
             y: e.clientY - rect.top
         }
 
+        // 難易度選択トグル
+        if (this.levelToggle.testHit(point)) {
+            this.levelToggle.clicked();
+        }
+
+
+        // スタートボタン押したとき
         if (this.startButton.testHit(point)) {
             this.menuSound.oneShot();
             this.startButton.clicked();
+            this.gameManager.setLevel(this.levelToggle.getSelectedText())
             // プレイシーンへ遷移
             this.gameManager.setState("Play");
             return;

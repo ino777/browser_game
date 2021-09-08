@@ -1,13 +1,13 @@
 import { BaseScene } from "./base-scene";
-import { Target, Octpus, Ray, TextObject, Alien, CircleEffect, RectEffect, Effect, ExplosionEffect, Sound } from "./model";
-import { GameState, GameManager } from "./gamemanager";
+import { Target, Octpus, Ray, TextObject, Alien, RectEffect, Effect, ExplosionEffect, Sound } from "./model";
+import { GameManager } from "./gamemanager";
 import shotSound from "./sounds/shot.mp3";
 import criticalShotSound from "./sounds/shot-critical.mp3";
 import failSound from "./sounds/fail.mp3";
 
 // プレイ画面
 export class PlayScene extends BaseScene {
-
+    private targetSize: number;
     private targetList: Target[]; // ターゲットの配列
     private displayNum: number;    // 一度に表示するターゲットの数
 
@@ -24,11 +24,11 @@ export class PlayScene extends BaseScene {
     readonly failMinus: number = 30;
     readonly bonusPlus: number = 50;
 
-    private scoreText: TextObject;
+    private scoreText: TextObject<number>;
 
     private elapsedTime: number;  // 経過時間
     private limitTime: number;  // 制限時間
-    private timeText: TextObject;
+    private timeText: TextObject<string>;
 
     // 音声
     private shotSound: Sound;
@@ -42,6 +42,14 @@ export class PlayScene extends BaseScene {
     }
 
     setup() {
+        switch (this.gameManager.getLevel()) {
+            case "Normal":
+                this.targetSize = 35;
+                break;
+            case "Hard":
+                this.targetSize = 20;
+                break;
+        }
         this.targetList = [];
         this.displayNum = 5;
 
@@ -52,12 +60,12 @@ export class PlayScene extends BaseScene {
         this.bonusTotal = 0;
 
         this.score = 0;
-        this.scoreText = new TextObject("", this.canvas.clientWidth / 2 - 100, 25);
+        this.scoreText = new TextObject(this.score, this.canvas.clientWidth / 2 - 100, 25);
         this.scoreText.textAlign = "end";
 
         this.elapsedTime = 0;
         this.limitTime = 20;
-        this.timeText = new TextObject("", this.canvas.clientWidth / 2, 25);
+        this.timeText = new TextObject(this.limitTime.toString(), this.canvas.clientWidth / 2, 25);
 
         this.shotSound = new Sound(shotSound);
         this.criticalShotSound = new Sound(criticalShotSound);
@@ -98,10 +106,10 @@ export class PlayScene extends BaseScene {
             t.animate();
             t.draw(this.ctx);
         });
-        this.timeText.text = (this.limitTime - Math.round(this.elapsedTime * 10) / 10).toFixed(1);
+        this.timeText.text = (this.limitTime - this.elapsedTime).toFixed(1);
         this.timeText.draw(this.ctx);
 
-        this.scoreText.text = this.score.toString();
+        this.scoreText.text = this.score;
         this.scoreText.draw(this.ctx);
 
         // エフェクト描画
@@ -138,7 +146,7 @@ export class PlayScene extends BaseScene {
             this.failCount += 1;
             this.score -= this.failMinus;
             this.failSound.oneShot();
-            this.effects.push(new RectEffect(this.canvas.clientWidth/2, this.canvas.clientHeight/2, 1, this.canvas.clientWidth, this.canvas.clientHeight, "white"));
+            this.effects.push(new RectEffect(this.canvas.clientWidth / 2, this.canvas.clientHeight / 2, 1, this.canvas.clientWidth, this.canvas.clientHeight, "white"));
         } else if (hitNum == 1) {
             // 1体
             this.killCount += hitNum;
@@ -171,7 +179,7 @@ export class PlayScene extends BaseScene {
     }
 
     createTarget(x?: number, y?: number, size?: number): Target {
-        const targetSize = size != undefined ? size : 35;
+        const targetSize = size != undefined ? size : this.targetSize;
         const targetX = x != undefined ? x : targetSize + (this.canvas.clientWidth - 2 * targetSize) * Math.random();
         const targetY = y != undefined ? y : targetSize + (this.canvas.clientHeight - 2 * targetSize) * Math.random();
         let target: Target;

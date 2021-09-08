@@ -16,15 +16,31 @@ abstract class BaseObject {
     abstract draw(ctx: CanvasRenderingContext2D): void;
 }
 
+/**
+ * Hit interface
+ */
+interface IHit {
+    // マウスが重なっているか判定
+    testHit(point: { x: number, y: number }): boolean;
+}
 
 /**
  * Click interface
  */
-interface IClick {
-    // クリック判定
-    testHit(point:{x:number, y:number}): boolean;
+interface IClick extends IHit {
     // クリック時処理
     clicked(): void;
+}
+
+
+/**
+ * Hover interface
+ */
+interface IHover extends IHit {
+    // マウスが重なったとき
+    hoverOver(): void;
+    // マウスが離れたとき
+    hoverOut(): void;
 }
 
 /**
@@ -127,7 +143,7 @@ export class Target extends BaseObject implements IAnimate, IClick {
         this.move(this.speedX, this.speedY);
     }
 
-    testHit(point:{x:number, y:number}) {
+    testHit(point: { x: number, y: number }) {
         if (!this.isActive) { return false }
 
         const dist = Math.sqrt((this.x - point.x) ** 2 + (this.y - point.y) ** 2);
@@ -187,7 +203,7 @@ export class Alien extends Target {
 /*
 ** Button
 */
-export class ButtonObject extends BaseObject implements IClick {
+export class ButtonObject extends BaseObject implements IClick, IHover {
     text: string;
     protected size: number;
     protected width: number;
@@ -241,7 +257,7 @@ export class ButtonObject extends BaseObject implements IClick {
         this.height = this.origH;
     }
 
-    testHit(point:{x:number, y:number}) {
+    testHit(point: { x: number, y: number }) {
         if (!this.isActive) { return false }
 
         return (this.x - this.width / 2 <= point.x && point.x <= this.x + this.width / 2)
@@ -256,16 +272,16 @@ export class ButtonObject extends BaseObject implements IClick {
 /*
 ** TextObject
 */
-export class TextObject extends BaseObject {
-    text: string;
+export class TextObject<T extends (string | number)> extends BaseObject {
+    text: T;
     size: number;
     color: string;
     textAlign: CanvasTextAlign;
-    
 
-    constructor(text: string | number, x: number, y: number, size=26, color="white", textAlign:CanvasTextAlign="start") {
+
+    constructor(text: T, x: number, y: number, size = 26, color = "white", textAlign: CanvasTextAlign = "start") {
         super(x, y);
-        this.text = text.toString();
+        this.text = text;
         this.size = size;
         this.color = color;
         this.textAlign = textAlign;
@@ -277,12 +293,112 @@ export class TextObject extends BaseObject {
         ctx.fillStyle = this.color;
         ctx.textAlign = this.textAlign;
         ctx.font = "bold " + this.size + "px" + " PixelMplus12";
-        ctx.fillText(this.text, this.x, this.y);
+        ctx.fillText(this.text.toString(), this.x, this.y);
+        ctx.restore();
+    }
+}
+
+
+/**
+ * ToggleObject
+ */
+export class Toggle extends BaseObject implements IClick {
+    protected size: number;
+    protected isSelected: boolean;
+    constructor(x: number, y: number, size: number) {
+        super(x, y);
+        this.size = size;
+        this.isSelected = false;
+    }
+
+    on() {
+        this.isSelected = true;
+    }
+
+    off() {
+        this.isSelected = false;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+        if (!this.isActive) { return; }
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+        ctx.strokeStyle = "white";
+        ctx.stroke();
+        if (this.isSelected) {
+            ctx.fillStyle = "white";
+            ctx.fill();
+        }
         ctx.restore();
     }
 
+    testHit(point: { x: number, y: number }) {
+        if (!this.isActive) { return false }
+
+        const dist = Math.sqrt((this.x - point.x) ** 2 + (this.y - point.y) ** 2);
+        return dist < this.size;
+    }
+
+    clicked() {
+        this.on();
+    }
 }
 
+/**
+ * ToggleListObject
+ */
+export class ToggleList<T extends (string | number)> extends BaseObject implements IClick {
+    protected size: number;
+    protected toggles: Toggle[];
+    protected texts: TextObject<T>[];
+    protected selectedIndex: number;
+
+    constructor(x: number, y: number, size: number, texts: T[]) {
+        super(x, y);
+        this.size = size;
+        this.toggles = [];
+        this.texts = [];
+        texts.forEach((text, index) => {
+            const yy = this.y + 5 * this.size * index;
+            this.toggles.push(new Toggle(this.x, yy, this.size));
+            this.texts.push(new TextObject<T>(text, this.x + 2 * this.size, yy + this.size, this.size * 4));
+        })
+        this.selectedIndex = 0;
+
+        // 1つだけ選択状態
+        this.toggles.forEach(t => t.off());
+        this.toggles[this.selectedIndex].on();
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+        if (!this.isActive) { return; }
+        ctx.save();
+        this.toggles.forEach(t => t.draw(ctx));
+        this.texts.forEach(t => t.draw(ctx));
+        ctx.restore();
+    }
+
+    testHit(point: { x: number, y: number }) {
+        let hit = false;
+        this.toggles.forEach((t, index) => {
+            if (t.testHit(point)) {
+                hit = true;
+                this.selectedIndex = index;
+            }
+        });
+        return hit;
+    }
+
+    clicked() {
+        this.toggles.forEach(t => t.off());
+        this.toggles[this.selectedIndex].on();
+    }
+
+    getSelectedText() {
+        return this.texts[this.selectedIndex].text;
+    }
+}
 
 /**
  * Sound

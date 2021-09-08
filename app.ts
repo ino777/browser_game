@@ -10,6 +10,7 @@ app.set("view engine", "pug");
 
 
 app.use("/", express.static(path.join(__dirname, "dist")));
+app.use("/static", express.static(path.join(__dirname, "public")));
 app.use("/", index);
 
 app.listen(port);

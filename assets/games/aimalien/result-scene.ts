@@ -1,20 +1,20 @@
 import { BaseScene } from "./base-scene";
-import { GameState, GameManager } from "./gamemanager";
+import { GameManager } from "./gamemanager";
 import { TextObject, ButtonObject, Sound } from "./model";
 import retrySound from "./sounds/menu.mp3";
 
 // リザルト画面
 export class ResultScene extends BaseScene {
-    private scoreText: TextObject;
-    private scoreResultText: TextObject;
-    private killTotalText: TextObject;
-    private killTotalResultText: TextObject;
-    private killPerSecondText: TextObject;
-    private killPerSecondResultText: TextObject;
-    private accuracyText: TextObject;
-    private accuracyResultText: TextObject;
-    private bonusText: TextObject;
-    private bonusResultText: TextObject;
+    private scoreText: TextObject<string>;
+    private scoreResultText: TextObject<number>;
+    private killTotalText: TextObject<string>;
+    private killTotalResultText: TextObject<number>;
+    private killPerSecondText: TextObject<string>;
+    private killPerSecondResultText: TextObject<number>;
+    private accuracyText: TextObject<string>;
+    private accuracyResultText: TextObject<string>;
+    private bonusText: TextObject<string>;
+    private bonusResultText: TextObject<number>;
 
     private retryButton: ButtonObject;
 

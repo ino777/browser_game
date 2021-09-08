@@ -1,4 +1,12 @@
 extends ./layout/_home.pug
 
-block content
-    h1=title
+block append content
+    div.uk-container.uk-margin-top
+        h2 ゲーム一覧
+
+        //- game list
+        ul.uk-list.uk-list-large.uk-list-disc.uk-link-text.uk-text-large
+            each page in pages
+                if page.type=="game"
+                    li
+                        a(href=page.url) #{page.name}

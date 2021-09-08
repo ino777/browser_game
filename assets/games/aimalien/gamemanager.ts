@@ -1,4 +1,5 @@
 export type GameState = "Title" | "Play" | "Result";
+export type GameLevel = "Normal" | "Hard";
 
 class GameScore {
     score: number;
@@ -21,6 +22,8 @@ export class GameManager {
     }[];
     private eventKey: number = 0;
 
+    private level: GameLevel;
+
     score: GameScore;
     info: { [key: string]: any };
 
@@ -28,6 +31,7 @@ export class GameManager {
     constructor(state: GameState) {
         this.state = state;
         this.onTransition = true;
+        this.level = "Normal";
 
         this.score = new GameScore();
         this.info = {};
@@ -66,6 +70,14 @@ export class GameManager {
             e.target.removeEventListener(e.type, e.listener);
         });
         this.eventKey = 0;
+    }
+
+    getLevel(){
+        return this.level;
+    }
+
+    setLevel(level:GameLevel) {
+        this.level = level;
     }
 }
 

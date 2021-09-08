@@ -9,8 +9,14 @@ html(lang="ja")
     
     body
         include ../include/_header
-        div.uk-container.uk-margin-top
-            h1=pages[key].name
-            block content
-
+        block content
+            div.uk-container.uk-margin-top
+                h2.uk-heading-small=pages[key].name
+                div.uk-section-small
+                    block game
+                div.uk-section-small
+                    block about
+                        h4 ゲームについて
+                div.uk-section-small
+                    p ソースコードは #[a(href=pages[key].srcCode target="_blank") こちら] 
         block script
