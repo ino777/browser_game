@@ -62,6 +62,7 @@ export class TitleScene extends BaseScene {
         // 難易度選択トグル
         if (this.levelToggle.testHit(point)) {
             this.levelToggle.clicked();
+            this.menuSound.oneShot();
         }
 
 
