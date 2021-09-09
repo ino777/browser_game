@@ -14,6 +14,9 @@ html(lang="ja")
                 h2.uk-heading-small=pages[key].name
                 div.uk-section-small
                     block game
+                        div#mainContainer
+                            canvas#mainCanvas
+                            script(src=args.gameSrc)
                 div.uk-section-small
                     block about
                         h4 ゲームについて
