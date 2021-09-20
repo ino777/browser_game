@@ -427,7 +427,6 @@ export class Actor extends CollideObject {
 
     // 接触始まり
     onCollisionEnter(obj: CollideObject, dir: direction) {
-        console.log(obj.id, dir);
         // 位置調整
         if (dir == "left") {
             if (this.vx <= 0 && this.point.x <= obj.right + this.width / 2) {
@@ -590,8 +589,6 @@ export class Actor extends CollideObject {
 }
 
 
-import groundImage from "./image/block.png";
-
 // 障害物の引数
 export interface ObstacleParams {
     point: WorldXY;
@@ -605,12 +602,9 @@ export interface ObstacleParams {
  * 障害物
  */
 export class Obstacle extends CollideObject {
-    private image: HTMLImageElement;
 
     constructor(params: ObstacleParams) {
         super(params.point, params.w, params.h, params.options);
-        this.image = new Image();
-        this.image.src = groundImage;
     }
 
     draw(ctx: CanvasRenderingContext2D, view: WorldXY, canvas: HTMLCanvasElement) {
