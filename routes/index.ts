@@ -27,4 +27,15 @@ router.get("/aimalien", (req, res, next) => {
     res.render("aimalien", context)
 })
 
+router.get("/jumpjack", (req, res, next) => {
+    const context: Context = {
+        key: "jumpjack",
+        title: "Jump Jack",
+        args: {
+            gameSrc: "./jumpjack.js"
+        }
+    }
+    res.render("jumpjack", context);
+})
+
 export default router;

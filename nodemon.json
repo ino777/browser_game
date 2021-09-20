@@ -4,7 +4,7 @@
         "NODE_ENV": "development"
     },
     "watch": [
-        "routes", "assets", "views", "./app.ts"
+        "routes", "views", "./app.ts"
     ],
     "ext": "js, mjs, ts, json, pug",
     "ignore": [

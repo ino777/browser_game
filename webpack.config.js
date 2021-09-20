@@ -5,7 +5,8 @@ const GAMEDIR = path.join(__dirname, "assets", "games");
 const games = {
     // モジュールバンドルを行う起点となるファイルの指定
     entry: {
-        aimalien: path.join(GAMEDIR, "aimalien", "app.ts")
+        aimalien: path.join(GAMEDIR, "aimalien", "app.ts"),
+        jumpjack: path.join(GAMEDIR, "jumpjack", "app.ts")
     },
     output: {
         // モジュールバンドルを行った結果を出力する場所やファイル名の指定
